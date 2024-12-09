@@ -47,5 +47,5 @@ cp .env.example .env
 ```
 
 ### Podcast Generation Tool
-- enter the topic in the podcast_agent.py file at the bottom of the script
+-enter the topic in the podcast_agent.py file at the bottom of the script
 ```
