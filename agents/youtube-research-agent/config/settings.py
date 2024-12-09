@@ -7,8 +7,7 @@ sys.path.append(str(project_root))
 
 # YouTube URLs to process
 YOUTUBE_URLS = [
-    "https://www.youtube.com/shorts/-Lzr4z74NpQ",
-    "https://www.youtube.com/shorts/Vy5PuNjUFYo",
+    "https://www.youtube.com/watch?v=G2pC-zZGFBs",
     # Add more URLs as needed
 ]
 
@@ -16,9 +15,3 @@ YOUTUBE_URLS = [
 MAX_THEMES_TO_RESEARCH = 1  # Limit number of themes
 ARTICLES_PER_THEME = 1      # Limit articles per theme
 SEARCH_DELAY = 5            # Delay between searches in seconds
-
-# File paths
-AUDIO_DIR = "audio"
-TRANSCRIPTION_SUMMARY_DIR = "transcription_summary"
-TRANSCRIPTION_OUTPUT_DIR = "transcriptions"
-OUTPUT_DIR = "agent-output"

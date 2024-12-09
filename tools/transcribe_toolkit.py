@@ -15,6 +15,9 @@ class TranscriptionTools(Toolkit):
         # Get the project root directory
         self.project_root = Path(__file__).parent.parent
         
+        # Set up base output directory using relative path
+        self.output_base = self.project_root / 'agents/youtube-research-agent/summary-agent-output'
+        
         # Load environment variables
         load_dotenv(self.project_root / '.env')
         api_key = os.getenv('ASSEMBLYAI_API_KEY')
@@ -25,9 +28,9 @@ class TranscriptionTools(Toolkit):
         aai.settings.api_key = api_key
         
         # Set up directories
-        self.audio_dir = self.project_root / 'audio'
-        self.transcriptions_dir = self.project_root / 'transcriptions'
-        self.transcriptions_dir.mkdir(exist_ok=True)
+        self.audio_dir = self.output_base / 'audio'
+        self.transcriptions_dir = self.output_base / 'transcriptions'
+        self.transcriptions_dir.mkdir(parents=True, exist_ok=True)
         
         # Register the tools
         self.register(self.transcribe_audio)

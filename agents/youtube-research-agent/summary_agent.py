@@ -5,7 +5,7 @@ import time
 from datetime import datetime
 
 # Add the project root to Python path
-project_root = Path(__file__).parent.parent
+project_root = Path(__file__).parent.parent.parent
 sys.path.append(str(project_root))
 
 # Now we can import from tools
@@ -26,17 +26,30 @@ from phi.utils.pprint import pprint_run_response
 from phi.utils.log import logger
 from dotenv import load_dotenv
 
-# Import settings
+# Import settings for URLs and research parameters
 from config.settings import (
-    YOUTUBE_URLS,  # Make sure this is included
+    YOUTUBE_URLS,
     MAX_THEMES_TO_RESEARCH,
     ARTICLES_PER_THEME,
-    SEARCH_DELAY,
-    AUDIO_DIR,
-    TRANSCRIPTION_SUMMARY_DIR,
-    TRANSCRIPTION_OUTPUT_DIR,
-    OUTPUT_DIR
+    SEARCH_DELAY
 )
+
+# Define base output directory relative to the script location
+SCRIPT_DIR = Path(__file__).parent
+BASE_OUTPUT_DIR = SCRIPT_DIR / "summary-agent-output"
+
+# File paths (relative to base output directory)
+AUDIO_DIR = BASE_OUTPUT_DIR / "audio"
+TRANSCRIPTION_SUMMARY_DIR = BASE_OUTPUT_DIR / "transcription_summary"
+TRANSCRIPTION_OUTPUT_DIR = BASE_OUTPUT_DIR / "transcriptions"
+OUTPUT_DIR = BASE_OUTPUT_DIR / "agent-output"
+
+# Create directories if they don't exist
+BASE_OUTPUT_DIR.mkdir(exist_ok=True)
+AUDIO_DIR.mkdir(exist_ok=True)
+TRANSCRIPTION_SUMMARY_DIR.mkdir(exist_ok=True)
+TRANSCRIPTION_OUTPUT_DIR.mkdir(exist_ok=True)
+OUTPUT_DIR.mkdir(exist_ok=True)
 
 print([e.name for e in RunEvent])
 
@@ -132,11 +145,10 @@ class ContentSummaryAgent(Workflow):
             # Step 1: Download audio
             logger.info("Step 1: Downloading audio")
             try:
-                # Call download_audio with quality parameter
                 result = self.youtube_tool.run(f"download_audio('{url}')")
                 logger.info(f"Download result: {result.content}")
                 
-                # Check if download was successful (looking for error keywords instead)
+                # Check if download was successful
                 if "error" in str(result.content).lower() or "failed" in str(result.content).lower():
                     logger.error(f"Download failed: {result.content}")
                     yield RunResponse(
@@ -146,8 +158,8 @@ class ContentSummaryAgent(Workflow):
                     )
                     return
                     
-                # Verify file exists
-                audio_dir = Path(__file__).parent.parent / AUDIO_DIR
+                # Update: Look for audio files in the correct directory
+                audio_dir = BASE_OUTPUT_DIR / "audio"  # Use the constant defined at the top
                 audio_files = list(audio_dir.glob('*.mp3'))
                 
                 if not audio_files:
@@ -173,8 +185,7 @@ class ContentSummaryAgent(Workflow):
             # Step 2: Transcribe audio
             try:
                 logger.info("Step 2: Transcribing audio")
-                audio_dir = Path(__file__).parent.parent / 'audio'
-                actual_file = next(audio_dir.glob('*.mp3'))
+                actual_file = next(AUDIO_DIR.glob('*.mp3'))
                 
                 logger.info(f"Transcribing audio file: {actual_file.name}")
                 transcription_result = self.transcription_tool.run(f"transcribe_audio('{actual_file.name}')")

@@ -38,7 +38,8 @@ env/
 audio/
 transcriptions/
 transcription_summary/
-
+podcast-agent-output/
+tmp/
 
 # Logs
 *.log
@@ -65,3 +66,13 @@ htmlcov/
 .Trashes
 ehthumbs.db
 Thumbs.db 
+
+# API Keys and Environment
+.env
+.env.*
+!.env.example
+
+# Generated content
+**/blog-posts/
+**/conversation-transcriptions/ 
+
